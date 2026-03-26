@@ -13,7 +13,11 @@ def infer(model:torch.nn.Module, tokenizer:MyTokenizer, prompt:str, device:str, 
             logits = model(x_input)
         next_token_logits = logits[0, -1] / temperature
         sm = my_softmax(next_token_logits, dim=-1)
-        output_ids.append(torch.argmax(sm).item())
+        next_id = torch.argmax(sm).item()
+        output_ids.append(next_id)
+        if tokenizer.vocab[next_id] == b'<|endoftext|>':
+            break
+
     return tokenizer.decode(output_ids)
     
 
