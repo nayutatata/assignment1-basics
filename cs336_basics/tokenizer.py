@@ -117,15 +117,17 @@ class MyTokenizer:
     
     @classmethod
     def from_files(cls, vocab_path:str, merges_path:str, special_tokens:list[str]):
-        with open(vocab_path, 'r') as f:
-            data = json.load(f)
-            vocab = {v:u.encode() for u,v in data.items()}
-        with open(merges_path, 'r') as f:
-            lines = f.readlines()
-            merges = []
-            for line in lines:
-                vec = line.strip().split(' ')
-                merges.append((vec[0].encode(), vec[1].encode()))
+        # with open(vocab_path, 'r') as f:
+        #     data = json.load(f)
+        #     vocab = {v:u.encode() for u,v in data.items()}
+        # with open(merges_path, 'r') as f:
+        #     lines = f.readlines()
+        #     merges = []
+        #     for line in lines:
+        #         vec = line.strip().split(' ')
+        #         merges.append((vec[0].encode(), vec[1].encode()))
+        vocab = pickle.load(open(vocab_path, 'rb'))
+        merges = pickle.load(open(merges_path, 'rb'))
         return cls(vocab, merges, special_tokens)
     
     def PreTokenize(self, text:str)->list[bytes]:
@@ -158,7 +160,7 @@ class MyTokenizer:
         ids = []
         for lst, s in zip(preTokensSplit, preTokens):
             if self.specialTokens and  s.decode() in self.specialTokens:
-                print(f'{s} is a special token')
+                # print(f'{s} is a special token')
                 ids.append(self.vocab_inverse[s])
                 continue
             while len(lst)>1:
